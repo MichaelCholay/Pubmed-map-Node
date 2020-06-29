@@ -153,19 +153,60 @@ apiRouter.route('/article-api/public/articles/abstract/:articleAbstract')
             });
     });
 
-// Get article with required words in keywords
-//exemple URL: http://localhost:9999/article-api/public/articles/keywords/ubiquitin-specific-protease
+// Get articles with required words in keywords
+//exemple URL: http://localhost:9999/article-api/public/articles/keywords/ubiquitin+specific+protease
 apiRouter.route('/article-api/public/articles/keywords/:keywordsList')
     .get(function (req, res, next) {
         var keywordsSearch = req.params.keywordsList;
         var keywordsSearchFormatted = keywordsSearch.replace(/[+]/g, " ")
         console.log(keywordsSearchFormatted)
         myGenericMongoClient.genericFindList('articles',
-            { 'keywordsList': { $regex: keywordsSearchFormatted } } ,
+            { 'keywordsList': { $regex: keywordsSearchFormatted } },
             function (err, articlesListKeywords) {
                 res.send(replace_mongoId_byPmid(articlesListKeywords));
                 console.log("number of articles with this search \"" + keywordsSearchFormatted + "\" in keywords: " + articlesListKeywords.length)
             });
+    });
+
+
+
+// Find article with author's forename
+function findArticlesWithForename(articles, forename) {
+    var selArticles = [];
+    var authorsList = []
+    for (i in articles) {
+        for (j in articles.authorsList) {
+            if (articles[i].authorsList[j].foreName = forename) {
+                selArticles.push(articles[i]);
+            }
+        }
+    }
+    console.log("number of articles: " + selArticles.length + " with this forename " + forename)
+    return selArticles;
+}
+
+//Get articles with a author lastname +/- forename
+//exemple URL: http://localhost:9999/article-api/public/articles/author/cholay
+//             http://localhost:9999/article-api/public/articles/author/cholay?forename=michael
+apiRouter.route('/article-api/public/articles/author/:lastName')
+    .get(function (req, res, next) {
+        var lastName = req.params.lastName
+        var foreName = req.query.foreName;
+        if (foreName != undefined) {
+            var authorQuery = { $and: [{ 'authorsList.lastName': { $regex: lastName, $options: 'i' } }, { 'authorsList.foreName': { $regex: foreName, $options: 'i' } }] }
+        } else {
+            var authorQuery = { 'authorsList.lastName': { $regex: lastName, $options: 'i' } }
+        }
+        myGenericMongoClient.genericFindList('articles',
+            authorQuery,
+            function (err, articlesListAuthor) {
+                // if (err)
+                //     res.send(err)
+                res.send(replace_mongoId_byPmid_inArray(articlesListAuthor));
+                if (foreName != undefined)
+                    console.log("number of articles of this author \"" + lastName + " " + foreName + "\": " + articlesListAuthor.length)
+                else console.log("number of articles of this author \"" + lastName + "\": " + articlesListAuthor.length)
+            })
     });
 
 // exemple URL: http://localhost:9999/article-api/public/geoloc (returning all geoloc)
