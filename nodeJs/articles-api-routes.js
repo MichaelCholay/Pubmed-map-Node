@@ -169,22 +169,6 @@ apiRouter.route('/article-api/public/articles/keywords/:keywordsList')
     });
 
 
-
-// Find article with author's forename
-function findArticlesWithForename(articles, forename) {
-    var selArticles = [];
-    var authorsList = []
-    for (i in articles) {
-        for (j in articles.authorsList) {
-            if (articles[i].authorsList[j].foreName = forename) {
-                selArticles.push(articles[i]);
-            }
-        }
-    }
-    console.log("number of articles: " + selArticles.length + " with this forename " + forename)
-    return selArticles;
-}
-
 //Get articles with a author lastname +/- forename
 //exemple URL: http://localhost:9999/article-api/public/articles/author/cholay
 //             http://localhost:9999/article-api/public/articles/author/cholay?forename=michael
@@ -200,8 +184,8 @@ apiRouter.route('/article-api/public/articles/author/:lastName')
         myGenericMongoClient.genericFindList('articles',
             authorQuery,
             function (err, articlesListAuthor) {
-                // if (err)
-                //     res.send(err)
+                if (err)
+                    res.send(err)
                 res.send(replace_mongoId_byPmid_inArray(articlesListAuthor));
                 if (foreName != undefined)
                     console.log("number of articles of this author \"" + lastName + " " + foreName + "\": " + articlesListAuthor.length)
@@ -223,8 +207,18 @@ apiRouter.route('/article-api/public/geoloc')
         });
     });
 
-// http://localhost:9999/article-api/public/articles?country=France
-// A FAIRE SI POSSIBLE
+// Get articles in a specific country (Doesn't work)
+//exemple URL: http://localhost:9999/article-api/public/articles/country/France
+// apiRouter.route('/article-api/public/articles/country/:affiliationPubmed')
+//     .get(function (req, res, next) {
+//         var countrySearch = req.params.countrySearch;
+//         myGenericMongoClient.genericFindList('articles',
+//             { 'authorsList.affiliationList.affiliationPubmed': { $regex: countrySearch, $options: 'i'  } },
+//             function (err, articlesListCountry) {
+//                 res.send(replace_mongoId_byPmid(articlesListCountry));
+//                 console.log("number of articles in the country \"" + countrySearch + "\": " /*+ articlesListCountry.length*/)
+//             });
+//     });
 
 
 // Get pmid list for articles with search of pubmed-api
