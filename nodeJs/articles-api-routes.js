@@ -91,15 +91,17 @@ apiRouter.route('/article-api/public/article/pmid/:pmid')
 
 // Get article with a required word in title
 //exemple URL: http://localhost:9999/article-api/public/articles/title/USP25
-apiRouter.route('/article-api/public/articles/title/:articleTitle')
+apiRouter.route('/article-api/public/articles/title/:wordTitle')
     .get(function (req, res, next) {
-        var titleSearch = req.params.articleTitle;
+        var titleSearch = req.params.wordTitle;
         var titleSearchFormatted = titleSearch.replace(/[+]/g, "|")
         myGenericMongoClient.genericFindList('articles',
             { 'articleTitle': { $regex: titleSearchFormatted, $options: 'i' } },
             function (err, articlesListTitle) {
+                if (err)
+                    res.send(err)
                 res.send(replace_mongoId_byPmid(articlesListTitle));
-                console.log("number of articles with this search \"" + titleSearchFormatted + "\" in title: " + articlesListTitle.length)
+                console.log("number of article(s) with word(s) \"" + titleSearchFormatted.replace(/[|]/g, ", ") + "\" in title: " + articlesListTitle.length)
             });
     });
 
