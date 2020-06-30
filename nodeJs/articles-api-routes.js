@@ -125,16 +125,18 @@ apiRouter.route('/article-api/public/articles/journal/:journal')
 
 // Get article with required words in abstract
 //exemple URL: http://localhost:9999/article-api/public/articles/abstract/usp28+USP25
-apiRouter.route('/article-api/public/articles/abstract/:articleAbstract')
+apiRouter.route('/article-api/public/articles/abstract/:wordAbstract')
     .get(function (req, res, next) {
-        var wordsSearch = req.params.articleAbstract;
+        var wordsSearch = req.params.wordAbstract;
         var abstractSearchFormatted = wordsSearch.replace(/[+]/g, "|")
         console.log(abstractSearchFormatted)
         myGenericMongoClient.genericFindList('articles',
             { 'articleAbstract': { $regex: abstractSearchFormatted, $options: 'i' } },
             function (err, articlesListAbstract) {
+                if (err)
+                    res.send(err)
                 res.send(replace_mongoId_byPmid(articlesListAbstract));
-                console.log("number of articles with this search \"" + abstractSearchFormatted + "\" in abstract: " + articlesListAbstract.length)
+                console.log("number of articles with this search \"" + abstractSearchFormatted.replace(/[|]/g, ", ") + "\" in abstract: " + articlesListAbstract.length)
             });
     });
 
