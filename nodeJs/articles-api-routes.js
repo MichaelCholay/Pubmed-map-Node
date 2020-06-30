@@ -296,6 +296,32 @@ function attributes_for_one_article(responseJs) {
     console.log("new article: " + JSON.stringify(article, null, " "))
 }
 
+// prettier-ignore
+// list of top 20 of journals in  Biochemistry, Genetics and Molecular Biology (based on SCImago Journal Rank indicator )
+const journalsList = ['Nature Reviews Molecular Cell Biology',
+    'Nature Reviews Genetics',
+    'Cell',
+    'Nature Reviews Cancer',
+    'Nature Methods',
+    'Nature Genetics',
+    'Annual Review of Biochemistry',
+    'Nature Medicine',
+    'Nature Biotechnology',
+    'Cancer Cell',
+    'Annual Review of Cell and Developmental Biology',
+    'Nature Catalysis',
+    'Molecular Cell',
+    'Annual Review of Plant Biology',
+    'Cell Metabolism',
+    'Annual Review of Physiology',
+    'Physiological Reviews',
+    'Journal of Clinical Oncology',
+    'Nature Cell Biology',
+    'Trends in Cell Biology'
+].map(function(v) {
+    return v.toLowerCase();
+  });
+
 // ArticleData when request return a list of articles
 function attributes_for_list_of_articles(publiListInput) {
     console.log("***** " + publiListInput.length + " articles found with this request ******")
@@ -305,191 +331,197 @@ function attributes_for_list_of_articles(publiListInput) {
         var article = new Object()
         var medlineCitationPropertyListArticles = publiListInput[i - 1].MedlineCitation
         var articlePropertyListArticles = publiListInput[i - 1].MedlineCitation.Article
+        //console.log("journal top:" + articlePropertyListArticles.Journal.toLowerCase())
+        if (journalsList.includes(articlePropertyListArticles.Journal.Title.toLowerCase())) {
+            article.pmid = medlineCitationPropertyListArticles.PMID
+            article.articleTitle = articlePropertyListArticles.ArticleTitle
+            article.journal = articlePropertyListArticles.Journal.Title
 
-        article.pmid = medlineCitationPropertyListArticles.PMID
-        article.articleTitle = articlePropertyListArticles.ArticleTitle
-        article.journal = articlePropertyListArticles.Journal.Title
-
-        if (medlineCitationPropertyListArticles.hasOwnProperty("DateCompleted")) {
-            date = new Date(Date.UTC(medlineCitationPropertyListArticles.DateCompleted.Year, medlineCitationPropertyListArticles.DateCompleted.Month - 1, medlineCitationPropertyListArticles.DateCompleted.Day))
-        } else {
-            date = new Date(Date.UTC(articlePropertyListArticles.ArticleDate.Year, articlePropertyListArticles.ArticleDate.Month - 1, articlePropertyListArticles.ArticleDate.Day))
-            console.log("no DateCompleted property for " + article.pmid)
-        }
-        article.publicationDate = date.toLocaleDateString(undefined, optionDate)
-
-        if (medlineCitationPropertyListArticles.hasOwnProperty("DateRevised")) {
-            dateOfRevision = new Date(Date.UTC(medlineCitationPropertyListArticles.DateRevised.Year, medlineCitationPropertyListArticles.DateRevised.Month - 1, medlineCitationPropertyListArticles.DateRevised.Day))
-        } else {
-            dateOfRevision = "No revision date"
-            console.log("no DateRevised property for " + article.pmid)
-        }
-        article.revisionDate = dateOfRevision.toLocaleDateString(undefined, optionDate)
-
-        // var abstractPropertyListArticles = articlePropertyListArticles.Abstract
-        if (articlePropertyListArticles.hasOwnProperty("Abstract")) {
-            if (Array.isArray(articlePropertyListArticles.Abstract.AbstractText)) {
-                article.articleAbstract = articlePropertyListArticles.Abstract.AbstractText.join(" ")
+            if (medlineCitationPropertyListArticles.hasOwnProperty("DateCompleted")) {
+                date = new Date(Date.UTC(medlineCitationPropertyListArticles.DateCompleted.Year, medlineCitationPropertyListArticles.DateCompleted.Month - 1, medlineCitationPropertyListArticles.DateCompleted.Day))
+            } else {
+                date = new Date(Date.UTC(articlePropertyListArticles.ArticleDate.Year, articlePropertyListArticles.ArticleDate.Month - 1, articlePropertyListArticles.ArticleDate.Day))
+                console.log("no DateCompleted property for " + article.pmid)
             }
-            else article.articleAbstract = articlePropertyListArticles.Abstract.AbstractText
-            //console.log(Array.isArray(articlePropertyListArticles.Abstract.AbstractText))
-        } else {
-            article.articleAbstract = "Not available"
-            console.log("no AbstractText property for " + article.pmid)
-        }
+            article.publicationDate = date.toLocaleDateString(undefined, optionDate)
 
-        article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article.pmid
-
-        if (medlineCitationPropertyListArticles.hasOwnProperty("KeywordList")) {
-            if (Array.isArray(medlineCitationPropertyListArticles.KeywordList.Keyword)) {
-                article.keywordsList = medlineCitationPropertyListArticles.KeywordList.Keyword.join(", ")
+            if (medlineCitationPropertyListArticles.hasOwnProperty("DateRevised")) {
+                dateOfRevision = new Date(Date.UTC(medlineCitationPropertyListArticles.DateRevised.Year, medlineCitationPropertyListArticles.DateRevised.Month - 1, medlineCitationPropertyListArticles.DateRevised.Day))
+            } else {
+                dateOfRevision = "No revision date"
+                console.log("no DateRevised property for " + article.pmid)
             }
-            else article.keywordsList = medlineCitationPropertyListArticles.KeywordList.Keyword
-        } else {
-            article.keywordsList = "No keyword"
-            console.log("No keyword for " + article.pmid)
-        }
+            article.revisionDate = dateOfRevision.toLocaleDateString(undefined, optionDate)
 
-        if (articlePropertyListArticles.hasOwnProperty("AuthorList")) {
-            article.authorsList = []
-            // authorsList_data_for_list_of_articles(publiListInput)
-            var authorsListInput = articlePropertyListArticles.AuthorList.Author
-            if (authorsListInput[0] != undefined) {
-                for (let index = 1; index <= authorsListInput.length; index++) {
-                    var author = new Object()
-                    author.lastName = authorsListInput[index - 1].LastName
-                    author.foreName = authorsListInput[index - 1].ForeName
-                    // author.AffiliationInfo = authorsListInput[index - 1].AffiliationInfo
-                    var affiliationInfoString = JSON.stringify(authorsListInput[index - 1].AffiliationInfo)
-                    //console.log("affiliationInfoString: " + affiliationInfoString)
-                    if (affiliationInfoString == undefined) {
-                        //console.log("No affiliation")
-                        affiliation1.affiliationPubmed = "No affiliation"
-                    } else if (affiliationInfoString.includes("Affiliation")) {
-                        //var affiliationAndEmail = authorsListInput[index - 1].AffiliationInfo.Affiliation
-                        // if (affiliationAndEmail == undefined) {
-                        //     return "Not available"
-                        // } else if (affiliationInfoString.includes("},{")){
-                        var affiliationAdress = affiliationInfoString.split('"Affiliation":"')
-                        author.affiliationList = []
-                        var affiliation1 = new Object()
-                        affiliation1.affiliationPubmed = affiliationAdress[1]
-                        if (affiliation1.affiliationPubmed != undefined) {
-                            if (affiliation1.affiliationPubmed.includes("Electronic address:")) {
-                                var affiliation = (affiliation1.affiliationPubmed.split('. Electronic address: '))
-                                affiliation1.affiliationPubmed = affiliation[0]
-                                if (affiliation[1].slice(-1) === '.') {
-                                    author.email = affiliation[1].slice(0, affiliation[1].length - 1)
-                                } else author.email = affiliation[1]
+            // var abstractPropertyListArticles = articlePropertyListArticles.Abstract
+            if (articlePropertyListArticles.hasOwnProperty("Abstract")) {
+                if (Array.isArray(articlePropertyListArticles.Abstract.AbstractText)) {
+                    article.articleAbstract = articlePropertyListArticles.Abstract.AbstractText.join(" ")
+                }
+                else article.articleAbstract = articlePropertyListArticles.Abstract.AbstractText
+                //console.log(Array.isArray(articlePropertyListArticles.Abstract.AbstractText))
+            } else {
+                article.articleAbstract = "Not available"
+                console.log("no AbstractText property for " + article.pmid)
+            }
+
+            article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article.pmid
+
+            if (medlineCitationPropertyListArticles.hasOwnProperty("KeywordList")) {
+                if (Array.isArray(medlineCitationPropertyListArticles.KeywordList.Keyword)) {
+                    article.keywordsList = medlineCitationPropertyListArticles.KeywordList.Keyword.join(", ")
+                }
+                else article.keywordsList = medlineCitationPropertyListArticles.KeywordList.Keyword
+            } else {
+                article.keywordsList = "No keyword"
+                console.log("No keyword for " + article.pmid)
+            }
+
+            if (articlePropertyListArticles.hasOwnProperty("AuthorList")) {
+                article.authorsList = []
+                // authorsList_data_for_list_of_articles(publiListInput)
+                var authorsListInput = articlePropertyListArticles.AuthorList.Author
+                if (authorsListInput[0] != undefined) {
+                    for (let index = 1; index <= authorsListInput.length; index++) {
+                        var author = new Object()
+                        author.lastName = authorsListInput[index - 1].LastName
+                        author.foreName = authorsListInput[index - 1].ForeName
+                        // author.AffiliationInfo = authorsListInput[index - 1].AffiliationInfo
+                        var affiliationInfoString = JSON.stringify(authorsListInput[index - 1].AffiliationInfo)
+                        //console.log("affiliationInfoString: " + affiliationInfoString)
+                        if (affiliationInfoString == undefined) {
+                            //console.log("No affiliation")
+                            affiliation1.affiliationPubmed = "No affiliation"
+                        } else if (affiliationInfoString.includes("Affiliation")) {
+                            //var affiliationAndEmail = authorsListInput[index - 1].AffiliationInfo.Affiliation
+                            // if (affiliationAndEmail == undefined) {
+                            //     return "Not available"
+                            // } else if (affiliationInfoString.includes("},{")){
+                            var affiliationAdress = affiliationInfoString.split('"Affiliation":"')
+                            author.affiliationList = []
+                            var affiliation1 = new Object()
+                            affiliation1.affiliationPubmed = affiliationAdress[1]
+                            if (affiliation1.affiliationPubmed != undefined) {
+                                if (affiliation1.affiliationPubmed.includes("Electronic address:")) {
+                                    var affiliation = (affiliation1.affiliationPubmed.split('. Electronic address: '))
+                                    affiliation1.affiliationPubmed = affiliation[0]
+                                    if (affiliation[1].slice(-1) === '.') {
+                                        author.email = affiliation[1].slice(0, affiliation[1].length - 1)
+                                    } else author.email = affiliation[1]
+                                }
+                            } else affiliation1.affiliationPubmed = affiliationAdress[1]
+
+                            //////////// geocoding \\\\\\\\\\\\\\
+
+                            // affiliation1.formatedAddress = geocoding(affiliation1.affiliationPubmed).formatedAddress
+                            // affiliation1.latitude = geocoding(affiliation1.affiliationPubmed).latitude
+                            // affiliation1.longitude = geocoding(affiliation1.affiliationPubmed).longitude
+
+
+
+                            var affPubmed = affiliation1.affiliationPubmed
+                            // affiliation1.latitude = "Not determined";
+                            // affiliation1.longitude = "";
+
+                            if (affPubmed != undefined) {
+                                console.log("affPubmed: " + affPubmed + typeof (affPubmed))
+                                // let {latitude, longitude}  = geocoding(affPubmed)
+                                mapsApiKey = 'AIzaSyCmLt2lwBI0uLNbd8V7boG56frwEfS-QuU'
+                                var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address= ${affPubmed} &key= ${mapsApiKey}`
+                                let geocodeRequest = new XMLHttpRequest()
+                                geocodeRequest.open("GET", urlGeoCodingAPI)
+                                //geocodeRequest.responseType = 'json';
+                                geocodeRequest.send()
+                                geocodeRequest.onload = function () {
+                                    //  if (geocodeRequest.status === 200) {
+                                    var geocodeResponse = JSON.parse(geocodeRequest.responseText)
+                                    geolocList = []
+                                    var geoloc = new Object()
+                                    // formatedAddress = geocodeRequest.results[0].formatted_address
+                                    geoloc.pmid = article.pmid
+                                    geoloc.googleFormatedAdress = geocodeResponse.results[0].formatted_address
+                                    geoloc.latitude = geocodeResponse.results[0].geometry.location.lat
+                                    geoloc.longitude = geocodeResponse.results[0].geometry.location.lng
+                                    geolocList.push(geoloc)
+                                    console.log(geoloc)
+
+                                    // myGenericMongoClient.genericFindOne('articles', {"pmid": article.pmid},
+                                    // function (err, res){
+                                    //console.log("find: " + JSON.stringify(res))
+                                    // myGenericMongoClient.genericUpdateOne('articles', {},
+                                    //     /*{"authorsList.affiliationList.latitude" : ""},*/
+                                    //     {
+                                    //         "$set": {
+                                    //             "authorsList.affiliationList.$[elem].latitude": "12", //geocodeResponse.results[0].geometry.location.lat,
+                                    //             // "authorsList.affiliationList.$[elem].longitude": "12"//longitude: geocodeResponse.results[0].geometry.location.lng
+                                    //         }
+                                    //     },
+                                    //     { "arrayFilters": [{ "elem.latitude": "Not determined" }], "multi": true },
+                                    //     function (err, res) {
+                                    //         if (err) throw err;
+                                    //         // console.log(res.upsertedCount)                                });
+                                    //     })
+                                    //    }
+                                    myGenericMongoClient.genericInsertOne('geoloc', geoloc, function (err, res) {
+                                        res.send(geoloc);
+                                    });
+                                    //console.log(`geoloc: ${geoloc.pmid} - ${geoloc.latitude} - ${geoloc.longitude}`)
+                                }
                             }
-                        } else affiliation1.affiliationPubmed = affiliationAdress[1]
+                            // console.log("test: " + geocodeResponse.results[0].geometry.location.lat)
+                            // affiliation1.latitude = 
+                            // console.log("latitude: " + latitude)
+                            // console.log("longitude: " + affiliation1.longitude)
+                            //console.log("aff: " + JSON.stringify(formatedAddress))
 
-                        //////////// geocoding \\\\\\\\\\\\\\
+                            author.affiliationList.push(affiliation1)
 
-                        // affiliation1.formatedAddress = geocoding(affiliation1.affiliationPubmed).formatedAddress
-                        // affiliation1.latitude = geocoding(affiliation1.affiliationPubmed).latitude
-                        // affiliation1.longitude = geocoding(affiliation1.affiliationPubmed).longitude
-
-
-
-                        var affPubmed = affiliation1.affiliationPubmed
-                        // affiliation1.latitude = "Not determined";
-                        // affiliation1.longitude = "";
-
-                        if (affPubmed != undefined) {
-                            console.log("affPubmed: " + affPubmed + typeof (affPubmed))
-                            // let {latitude, longitude}  = geocoding(affPubmed)
-                            mapsApiKey = 'AIzaSyCmLt2lwBI0uLNbd8V7boG56frwEfS-QuU'
-                            var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address= ${affPubmed} &key= ${mapsApiKey}`
-                            let geocodeRequest = new XMLHttpRequest()
-                            geocodeRequest.open("GET", urlGeoCodingAPI)
-                            //geocodeRequest.responseType = 'json';
-                            geocodeRequest.send()
-                            geocodeRequest.onload = function () {
-                                //  if (geocodeRequest.status === 200) {
-                                var geocodeResponse = JSON.parse(geocodeRequest.responseText)
-                                geolocList = []
-                                var geoloc = new Object()
-                                // formatedAddress = geocodeRequest.results[0].formatted_address
-                                geoloc.pmid = article.pmid
-                                geoloc.latitude = geocodeResponse.results[0].geometry.location.lat
-                                geoloc.longitude = geocodeResponse.results[0].geometry.location.lng
-                                geolocList.push(geoloc)
-                                console.log("latitude: " + geoloc.latitude)
-
-                                // myGenericMongoClient.genericFindOne('articles', {"pmid": article.pmid},
-                                // function (err, res){
-                                //console.log("find: " + JSON.stringify(res))
-                                // myGenericMongoClient.genericUpdateOne('articles', {},
-                                //     /*{"authorsList.affiliationList.latitude" : ""},*/
-                                //     {
-                                //         "$set": {
-                                //             "authorsList.affiliationList.$[elem].latitude": "12", //geocodeResponse.results[0].geometry.location.lat,
-                                //             // "authorsList.affiliationList.$[elem].longitude": "12"//longitude: geocodeResponse.results[0].geometry.location.lng
-                                //         }
-                                //     },
-                                //     { "arrayFilters": [{ "elem.latitude": "Not determined" }], "multi": true },
-                                //     function (err, res) {
-                                //         if (err) throw err;
-                                //         // console.log(res.upsertedCount)                                });
-                                //     })
-                                //    }
-                                myGenericMongoClient.genericInsertOne('geoloc', geoloc, function (err, res) {
-                                    res.send(geoloc);
-                                });
-                                //console.log(`geoloc: ${geoloc.pmid} - ${geoloc.latitude} - ${geoloc.longitude}`)
-                            }
+                            author.affiliation2 = affiliationAdress[2]
+                            if (author.affiliation2 != undefined) {
+                                if (author.affiliation2.includes("Electronic address:")) {
+                                    var affiliation = (author.affiliation2.split('. Electronic address: '))
+                                    author.affiliation2 = affiliation[0]
+                                    if (affiliation[1].slice(-1) === '.') {
+                                        author.email = affiliation[1].slice(0, affiliation[1].length - 1)
+                                    } else author.email = affiliation[1]
+                                }
+                            } else author.affiliation2 = affiliationAdress[2]
+                            //console.log("1: " + author.affiliation1 + " 2: " + author.affiliation2)
                         }
-                        // console.log("test: " + geocodeResponse.results[0].geometry.location.lat)
-                        // affiliation1.latitude = 
-                        // console.log("latitude: " + latitude)
-                        // console.log("longitude: " + affiliation1.longitude)
-                        //console.log("aff: " + JSON.stringify(formatedAddress))
-
-                        author.affiliationList.push(affiliation1)
-
-                        author.affiliation2 = affiliationAdress[2]
-                        if (author.affiliation2 != undefined) {
-                            if (author.affiliation2.includes("Electronic address:")) {
-                                var affiliation = (author.affiliation2.split('. Electronic address: '))
-                                author.affiliation2 = affiliation[0]
-                                if (affiliation[1].slice(-1) === '.') {
-                                    author.email = affiliation[1].slice(0, affiliation[1].length - 1)
-                                } else author.email = affiliation[1]
-                            }
-                        } else author.affiliation2 = affiliationAdress[2]
-                        //console.log("1: " + author.affiliation1 + " 2: " + author.affiliation2)
+                        article.authorsList.push(author)
                     }
+                } else {
+                    author.lastName = authorsListInput.LastName
+                    author.foreName = authorsListInput.ForeName
                     article.authorsList.push(author)
                 }
             } else {
-                author.lastName = authorsListInput.LastName
-                author.foreName = authorsListInput.ForeName
-                article.authorsList.push(author)
+                article.authorsList = "No author"
+                console.log("No author for " + article.pmid)
             }
+
+            console.log()
+            console.log("------------------------- ARTICLE " + i + " / " + publiListInput.length + " -------------------------")
+            console.log(JSON.stringify(article, null, " "))
+            console.log()
+            // console.log("***** Find " + article.authorsList.length + " author(s) for this article *****")
+            // console.log("author(s): " + JSON.stringify(article.authorsList, null, " "))
+
+            //replace_mongoId_byPmid(article)
+            //var publicationsList = [article]
+            //replace_mongoId_byPmid_inArray(publicationsList)
+            // mongoDbInsert(null, article)
+            myGenericMongoClient.genericInsertOne('articles',
+                article,
+                function (err, res) {
+                    if (err)
+                        res.send(err)
+                    res.send(article);
+                });
+            console.log("Article with PMID " + article.pmid + " is successfully saved")
         } else {
-            article.authorsList = "No author"
-            console.log("No author for " + article.pmid)
+            console.log("Article with PMID " + publiListInput[i - 1].MedlineCitation.PMID + " is not saved (published in not selected journal)")
         }
-
-        console.log()
-        console.log("------------------------- ARTICLE " + i + " / " + publiListInput.length + " -------------------------")
-        console.log(JSON.stringify(article, null, " "))
-        console.log()
-        // console.log("***** Find " + article.authorsList.length + " author(s) for this article *****")
-        // console.log("author(s): " + JSON.stringify(article.authorsList, null, " "))
-
-        //replace_mongoId_byPmid(article)
-        //var publicationsList = [article]
-        //replace_mongoId_byPmid_inArray(publicationsList)
-        // mongoDbInsert(null, article)
-        myGenericMongoClient.genericInsertOne('articles',
-            article,
-            function (err, res) {
-                res.send(article);
-            });
-        console.log("Article with PMID " + article.pmid + " is successfully saved")
-
     }
 }
 
