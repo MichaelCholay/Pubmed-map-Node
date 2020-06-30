@@ -142,14 +142,16 @@ apiRouter.route('/article-api/public/articles/abstract/:wordAbstract')
 
 // Get articles with required words in keywords
 //exemple URL: http://localhost:9999/article-api/public/articles/keywords/ubiquitin+specific+protease
-apiRouter.route('/article-api/public/articles/keywords/:keywordsList')
+apiRouter.route('/article-api/public/articles/keywords/:keyword')
     .get(function (req, res, next) {
-        var keywordsSearch = req.params.keywordsList;
+        var keywordsSearch = req.params.keyword;
         var keywordsSearchFormatted = keywordsSearch.replace(/[+]/g, " ")
         console.log(keywordsSearchFormatted)
         myGenericMongoClient.genericFindList('articles',
             { 'keywordsList': { $regex: keywordsSearchFormatted } },
             function (err, articlesListKeywords) {
+                if (err)
+                    res.send(err)
                 res.send(replace_mongoId_byPmid(articlesListKeywords));
                 console.log("number of articles with this search \"" + keywordsSearchFormatted + "\" in keywords: " + articlesListKeywords.length)
             });
