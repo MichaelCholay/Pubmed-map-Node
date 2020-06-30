@@ -64,47 +64,28 @@ apiRouter.route('/article-api/public/articles')
             } else {
                 res.send(replace_mongoId_byPmid_inArray(allArticle));
                 console.log("number of articles in database: " + allArticle.length)
-
             }
+            if (err)
+                    res.send(err)
         });
     });
-
-// switch dateMini or Pmid NE FONCTIONNE PAS
-// apiRouter.route('/article-api/public/articles')
-//     .get(function (req, res, next) {
-//         var filter = req.query.filter
-//         // var dateMini
-//         // var pmidSearch
-//         myGenericMongoClient.genericFindList('articles', {}, function (err, allArticle) {
-//             switch (filter) {
-//                 case 'dateMini':
-//                     res.send(replace_mongoId_byPmid_inArray(findArticlesWithDateMini(allArticle, dateMini)));
-//                     break
-//                 case 'pmidSearch':
-//                     res.send(replace_mongoId_byPmid_inArray(findArticlesWithPmid(allArticle, pmidSearch)));
-//                     console.log(filter)
-//                     break
-//                 default:
-//                     res.send(replace_mongoId_byPmid_inArray(allArticle));
-//                     console.log("number of articles: " + allArticle.length)
-//                     break
-
-//             }
-
-//         }
-//         );
-//     });
 
 // Get article by pmid
 //exemple URL: http://localhost:9999/article-api/public/article/pmid/19909739
 apiRouter.route('/article-api/public/article/pmid/:pmid')
     .get(function (req, res, next) {
         var articlePmid = req.params.pmid;
-        console.log("articlePmid: " + articlePmid)
         myGenericMongoClient.genericFindOne('articles',
             { 'pmid': articlePmid },
             function (err, article) {
+                if (err)
+                    res.send(err)
+                if (article) {
                 res.send(replace_mongoId_byPmid(article));
+                console.log("Article wit PMID: " + articlePmid + " is found")
+                } else {
+                    console.log("No article found with the PMID: " + articlePmid)
+                }
             });
     });
 
@@ -407,47 +388,49 @@ function attributes_for_list_of_articles(publiListInput) {
                         // affiliation1.latitude = "Not determined";
                         // affiliation1.longitude = "";
 
-                        console.log("affPubmed: " + affPubmed + typeof (affPubmed))
-                        // let {latitude, longitude}  = geocoding(affPubmed)
-                        mapsApiKey = 'AIzaSyCmLt2lwBI0uLNbd8V7boG56frwEfS-QuU'
-                        var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address= ${affPubmed} &key= ${mapsApiKey}`
-                        let geocodeRequest = new XMLHttpRequest()
-                        geocodeRequest.open("GET", urlGeoCodingAPI)
-                        //geocodeRequest.responseType = 'json';
-                        geocodeRequest.send()
-                        geocodeRequest.onload = function () {
-                            //  if (geocodeRequest.status === 200) {
-                            var geocodeResponse = JSON.parse(geocodeRequest.responseText)
-                            geolocList = []
-                            var geoloc = new Object()
-                            // formatedAddress = geocodeRequest.results[0].formatted_address
-                            geoloc.pmid = article.pmid
-                            geoloc.latitude = geocodeResponse.results[0].geometry.location.lat
-                            geoloc.longitude = geocodeResponse.results[0].geometry.location.lng
-                            geolocList.push(geoloc)
-                            // console.log("latitude: " + latitude)
-
-                            // myGenericMongoClient.genericFindOne('articles', {"pmid": article.pmid},
-                            // function (err, res){
-                            //console.log("find: " + JSON.stringify(res))
+                        if (affPubmed != undefined) {
+                            console.log("affPubmed: " + affPubmed + typeof (affPubmed))
+                            // let {latitude, longitude}  = geocoding(affPubmed)
+                            mapsApiKey = 'AIzaSyCmLt2lwBI0uLNbd8V7boG56frwEfS-QuU'
+                            var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address= ${affPubmed} &key= ${mapsApiKey}`
+                            let geocodeRequest = new XMLHttpRequest()
+                            geocodeRequest.open("GET", urlGeoCodingAPI)
+                            //geocodeRequest.responseType = 'json';
+                            geocodeRequest.send()
+                            geocodeRequest.onload = function () {
+                                //  if (geocodeRequest.status === 200) {
+                                var geocodeResponse = JSON.parse(geocodeRequest.responseText)
+                                geolocList = []
+                                var geoloc = new Object()
+                                // formatedAddress = geocodeRequest.results[0].formatted_address
+                                geoloc.pmid = article.pmid
+                                geoloc.latitude = geocodeResponse.results[0].geometry.location.lat
+                                geoloc.longitude = geocodeResponse.results[0].geometry.location.lng
+                                geolocList.push(geoloc)
+                                console.log("latitude: " + geoloc.latitude)
+                                
+                                // myGenericMongoClient.genericFindOne('articles', {"pmid": article.pmid},
+                                // function (err, res){
+                                    //console.log("find: " + JSON.stringify(res))
                             // myGenericMongoClient.genericUpdateOne('articles', {},
                             //     /*{"authorsList.affiliationList.latitude" : ""},*/
                             //     {
-                            //         "$set": {
-                            //             "authorsList.affiliationList.$[elem].latitude": "12", //geocodeResponse.results[0].geometry.location.lat,
+                                //         "$set": {
+                                    //             "authorsList.affiliationList.$[elem].latitude": "12", //geocodeResponse.results[0].geometry.location.lat,
                             //             // "authorsList.affiliationList.$[elem].longitude": "12"//longitude: geocodeResponse.results[0].geometry.location.lng
                             //         }
                             //     },
                             //     { "arrayFilters": [{ "elem.latitude": "Not determined" }], "multi": true },
                             //     function (err, res) {
-                            //         if (err) throw err;
-                            //         // console.log(res.upsertedCount)                                });
-                            //     })
-                            //    }
-                            myGenericMongoClient.genericInsertOne('geoloc', geolocList, function (err, res) {
-                                res.send(geoloc);
-                            });
-                            //console.log(`geoloc: ${geoloc.pmid} - ${geoloc.latitude} - ${geoloc.longitude}`)
+                                //         if (err) throw err;
+                                //         // console.log(res.upsertedCount)                                });
+                                //     })
+                                //    }
+                                myGenericMongoClient.genericInsertOne('geoloc', geoloc, function (err, res) {
+                                    res.send(geoloc);
+                                });
+                                //console.log(`geoloc: ${geoloc.pmid} - ${geoloc.latitude} - ${geoloc.longitude}`)
+                            }
                         }
                         // console.log("test: " + geocodeResponse.results[0].geometry.location.lat)
                         // affiliation1.latitude = 
