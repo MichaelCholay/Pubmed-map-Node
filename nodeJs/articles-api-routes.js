@@ -66,7 +66,7 @@ apiRouter.route('/article-api/public/articles')
                 console.log("number of articles in database: " + allArticle.length)
             }
             if (err)
-                    res.send(err)
+                res.send(err)
         });
     });
 
@@ -81,8 +81,8 @@ apiRouter.route('/article-api/public/article/pmid/:pmid')
                 if (err)
                     res.send(err)
                 if (article) {
-                res.send(replace_mongoId_byPmid(article));
-                console.log("Article wit PMID: " + articlePmid + " is found")
+                    res.send(replace_mongoId_byPmid(article));
+                    console.log("Article wit PMID: " + articlePmid + " is found")
                 } else {
                     console.log("No article found with the PMID: " + articlePmid)
                 }
@@ -115,6 +115,8 @@ apiRouter.route('/article-api/public/articles/journal/:journal')
         myGenericMongoClient.genericFindList('articles',
             { 'journal': journalSearchFormatted },
             function (err, articlesListJournal) {
+                if (err)
+                    res.send(err)
                 res.send(replace_mongoId_byPmid(articlesListJournal));
                 console.log("number of articles in " + journalSearchFormatted + " journal: " + articlesListJournal.length)
             });
@@ -410,20 +412,20 @@ function attributes_for_list_of_articles(publiListInput) {
                                 geoloc.longitude = geocodeResponse.results[0].geometry.location.lng
                                 geolocList.push(geoloc)
                                 console.log("latitude: " + geoloc.latitude)
-                                
+
                                 // myGenericMongoClient.genericFindOne('articles', {"pmid": article.pmid},
                                 // function (err, res){
-                                    //console.log("find: " + JSON.stringify(res))
-                            // myGenericMongoClient.genericUpdateOne('articles', {},
-                            //     /*{"authorsList.affiliationList.latitude" : ""},*/
-                            //     {
+                                //console.log("find: " + JSON.stringify(res))
+                                // myGenericMongoClient.genericUpdateOne('articles', {},
+                                //     /*{"authorsList.affiliationList.latitude" : ""},*/
+                                //     {
                                 //         "$set": {
-                                    //             "authorsList.affiliationList.$[elem].latitude": "12", //geocodeResponse.results[0].geometry.location.lat,
-                            //             // "authorsList.affiliationList.$[elem].longitude": "12"//longitude: geocodeResponse.results[0].geometry.location.lng
-                            //         }
-                            //     },
-                            //     { "arrayFilters": [{ "elem.latitude": "Not determined" }], "multi": true },
-                            //     function (err, res) {
+                                //             "authorsList.affiliationList.$[elem].latitude": "12", //geocodeResponse.results[0].geometry.location.lat,
+                                //             // "authorsList.affiliationList.$[elem].longitude": "12"//longitude: geocodeResponse.results[0].geometry.location.lng
+                                //         }
+                                //     },
+                                //     { "arrayFilters": [{ "elem.latitude": "Not determined" }], "multi": true },
+                                //     function (err, res) {
                                 //         if (err) throw err;
                                 //         // console.log(res.upsertedCount)                                });
                                 //     })
