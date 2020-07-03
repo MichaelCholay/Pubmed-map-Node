@@ -15,7 +15,7 @@ const optionDate = { year: "numeric", month: "2-digit", day: "2-digit" }
 // Replace mongoId by PMID
 function replace_mongoId_byPmid(article) {
     if (article != null) {
-        article._id = article.pmid;
+        article._id = article._id;
         delete article._id;
     }
     return article;
@@ -42,15 +42,15 @@ function findArticlesWithDateMini(articles, dateMini) {
     return selArticles;
 }
 
-// Find article with pmid
+// Find article with _id
 // function findArticlesWithPmid(articles, pmidSearch) {
 //     var selArticles = [];
 //     for (i in articles) {
-//         if (articles[i].pmid = pmidSearch) {
+//         if (articles[i]._id = pmidSearch) {
 //             selArticles.push(articles[i]);
 //         }
 //     }
-//     console.log("number of articles: " + selArticles.length + " with pmid " + pmidSearch)
+//     console.log("number of articles: " + selArticles.length + " with _id " + pmidSearch)
 //     return selArticles;
 // }
 
@@ -72,13 +72,13 @@ apiRouter.route('/article-api/public/articles')
         });
     });
 
-// Get article by pmid
-//exemple URL: http://localhost:9999/article-api/public/article/pmid/19909739
-apiRouter.route('/article-api/public/article/pmid/:pmid')
+// Get article by _id
+//exemple URL: http://localhost:9999/article-api/public/article/_id/19909739
+apiRouter.route('/article-api/public/article/_id/:_id')
     .get(function (req, res, next) {
-        var articlePmid = req.params.pmid;
+        var articlePmid = req.params._id;
         myGenericMongoClient.genericFindOne('articles',
-            { 'pmid': articlePmid },
+            { '_id': articlePmid },
             function (err, article) {
                 if (err)
                     res.send(err)
@@ -212,7 +212,7 @@ apiRouter.route('/article-api/public/geoloc')
 //     });
 
 
-// Get pmid list for articles with search of pubmed-api each day
+// Get _id list for articles with search of pubmed-api each day
 function find_Pmid_bySearch_with_terms(/*term*/) {
     var urlApiSearch = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&usehistory=y&reldate=10&term=Cell[ta]'/* + term*/
     let request = new XMLHttpRequest()
@@ -277,7 +277,7 @@ function attributes_for_one_article(responseJs) {
     var articlePropertyOneArticle = responseJs.PubmedArticleSet.PubmedArticle.MedlineCitation.Article
 
 
-    article.pmid = medlineCitationPropertyOneArticle.PMID
+    article._id = medlineCitationPropertyOneArticle.PMID
     article.articleTitle = articlePropertyOneArticle.ArticleTitle
     article.journal = articlePropertyOneArticle.Journal.Title
 
@@ -291,7 +291,7 @@ function attributes_for_one_article(responseJs) {
     article.revisionDate = dateOfRevision.toLocaleDateString(undefined, optionDate)
 
     article.articleAbstract = articlePropertyOneArticle.Abstract.AbstractText
-    article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article.pmid
+    article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article._id
 
     if (medlineCitationPropertyOneArticle.hasOwnProperty("KeywordList")) {
         article.keywordsList = medlineCitationPropertyOneArticle.KeywordList.Keyword
@@ -339,7 +339,7 @@ async function attributes_for_list_of_articles(publiListInput) {
         var articlePropertyListArticles = publiListInput[i - 1].MedlineCitation.Article
         //console.log("journal top:" + articlePropertyListArticles.Journal.toLowerCase())
         // if (journalsList.includes(articlePropertyListArticles.Journal.Title.toLowerCase())) {
-        article.pmid = medlineCitationPropertyListArticles.PMID
+        article._id = medlineCitationPropertyListArticles.PMID
         article.articleTitle = articlePropertyListArticles.ArticleTitle
         article.journal = articlePropertyListArticles.Journal.Title
 
@@ -347,7 +347,7 @@ async function attributes_for_list_of_articles(publiListInput) {
             dateOfRevision = new Date(Date.UTC(medlineCitationPropertyListArticles.DateRevised.Year, medlineCitationPropertyListArticles.DateRevised.Month - 1, medlineCitationPropertyListArticles.DateRevised.Day))
         } else {
             dateOfRevision = "No revision date"
-            console.log("no DateRevised property for " + article.pmid)
+            console.log("no DateRevised property for " + article._id)
         }
         article.revisionDate = dateOfRevision.toLocaleDateString(undefined, optionDate)
 
@@ -358,10 +358,10 @@ async function attributes_for_list_of_articles(publiListInput) {
             else article.articleAbstract = articlePropertyListArticles.Abstract.AbstractText
         } else {
             article.articleAbstract = "Not available"
-            console.log("no AbstractText property for " + article.pmid)
+            console.log("no AbstractText property for " + article._id)
         }
 
-        article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article.pmid
+        article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article._id
 
         if (medlineCitationPropertyListArticles.hasOwnProperty("KeywordList")) {
             if (Array.isArray(medlineCitationPropertyListArticles.KeywordList.Keyword)) {
@@ -370,7 +370,7 @@ async function attributes_for_list_of_articles(publiListInput) {
             else article.keywordsList = medlineCitationPropertyListArticles.KeywordList.Keyword
         } else {
             article.keywordsList = "No keyword"
-            console.log("No keyword for " + article.pmid)
+            console.log("No keyword for " + article._id)
         }
 
         if (articlePropertyListArticles.hasOwnProperty("AuthorList")) {
@@ -497,7 +497,7 @@ async function attributes_for_list_of_articles(publiListInput) {
                     res.send(err)
                 res.send(article);
             });
-        console.log("Article with PMID " + article.pmid + " is successfully saved")
+        console.log("Article with PMID " + article._id + " is successfully saved")
         
     }
     console.log("End of uploading data from Pubmed library")
@@ -539,7 +539,7 @@ async function attributes_for_list_of_articles(publiListInput) {
     //     }
     // } else {
     //     // article.authorsList = "No author"
-    //     console.log("No availbale geocode " + article.pmid)
+    //     console.log("No availbale geocode " + article._id)
 
     // if (count != 0) {
     //     var querykey = responseJs.esearchresult.querykey
@@ -663,7 +663,7 @@ async function attributes_for_list_of_articles(publiListInput) {
         for (var x = 0; x < publiListInput.length; x++) {
             var article = new Object()
             medlineCitation = publiListInput[x].MedlineCitation
-            article.pmid = publiListInput[x].MedlineCitation.PMID
+            article._id = publiListInput[x].MedlineCitation.PMID
             article.articleTitle = publiListInput[x].MedlineCitation.Article.ArticleTitle
             article.journal = publiListInput[x].MedlineCitation.Article.Journal.Title
 
@@ -678,16 +678,16 @@ async function attributes_for_list_of_articles(publiListInput) {
             //     article.epubDate = moment(publiListInput[x].MedlineCitation.Article.ArticleDate.Year, publiListInput[x].MedlineCitation.Article.ArticleDate.Month - 1, publiListInput[x].MedlineCitation.Article.ArticleDate.Day, "MM-DD-YYYY")
             // } else article.epubDate = "Not available",
             article.abstract = publiListInput[x].MedlineCitation.Article.Abstract.AbstractText
-            article.pubmedURL = "Pubmed URL: https://pubmed.ncbi.nlm.nih.gov/" + article.pmid
+            article.pubmedURL = "Pubmed URL: https://pubmed.ncbi.nlm.nih.gov/" + article._id
             if (medlineCitation.hasOwnProperty("KeywordList")) {
                 article.keywordsList = publiListInput[x].MedlineCitation.KeywordList.Keyword
             } else article.keywordsList = "Not available"
             authorsList = []
-            //article.pmid = publiList[x].MedlineCitation.PMID
+            //article._id = publiList[x].MedlineCitation.PMID
             console.log()
             console.log("------------------- ARTICLE " + (x + 1) + " / " + publiListInput.length + " -------------------")
             console.log()
-            console.log("PMID: " + article.pmid)
+            console.log("PMID: " + article._id)
             //article.articleTitle = publiList[x].MedlineCitation.Article.ArticleTitle
             console.log("ArticleTitle: " + article.articleTitle)
             console.log("Journal: " + article.journal)
@@ -739,7 +739,7 @@ async function attributes_for_list_of_articles(publiListInput) {
             var articleMongo = mongoose.model('Publication', publiSchema);
 
             var articleMongo = new articleMongo()
-            articleMongo.pmid = article.pmid
+            articleMongo._id = article._id
             articleMongo.articleTitle = article.articleTitle
             articleMongo.journal = article.journal
             articleMongo.publicationDate = article.publicationDate
@@ -751,7 +751,7 @@ async function attributes_for_list_of_articles(publiListInput) {
 
             articleMongo.save({ writeConcern: { w: "majority", wtimeout: 5000 } }, function (err) {
                 if (err) throw err
-                console.log("Documents with PMID: " + articleMongo.pmid + " is inserted with success ")
+                console.log("Documents with PMID: " + articleMongo._id + " is inserted with success ")
             })
         }
 
@@ -760,7 +760,7 @@ async function attributes_for_list_of_articles(publiListInput) {
         // for (var z = 0; z < publiList.length; z++) {
         //     var article = mongoose.model('Publication', publiSchema);
         //     var article = new article()
-        //     article.pmid = publiListInput[z].pmid
+        //     article._id = publiListInput[z]._id
         //     // article.articleTitle = articleTitle
         //     // article.journal = journal
         //     // article.publicationDate = publicationDate
@@ -837,7 +837,7 @@ async function attributes_for_list_of_articles(publiListInput) {
 
         // var post = (function (req, res) {
         //     var public = new Public();
-        //     public.pmid = pmid;
+        //     public._id = _id;
         //     piscine.title = title;
         //     piscine.save(function (err) {
         //         if (err) {
