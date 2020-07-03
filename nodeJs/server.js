@@ -1,6 +1,6 @@
 var express = require('express');
-// var articleApiRoutes = require('./articles-api-routes.js');
-var articleApiRoutes = require('./test3.js');
+var articleApiRoutes = require('./articles-api-routes.js');
+// var articleApiRoutes = require('./test3.js');
 var app = express();
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
