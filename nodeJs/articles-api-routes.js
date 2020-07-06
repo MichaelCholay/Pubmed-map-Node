@@ -15,7 +15,7 @@ const optionDate = { year: "numeric", month: "2-digit", day: "2-digit" }
 // Replace mongoId by PMID
 function replace_mongoId_byPmid(article) {
     if (article != null) {
-        article._id = article._id;
+        article._id = article.pmid;
         delete article._id;
     }
     return article;
@@ -64,7 +64,7 @@ apiRouter.route('/article-api/public/articles')
             if (dateMini) {
                 res.send(replace_mongoId_byPmid_inArray(findArticlesWithDateMini(allArticle, dateMini)));
             } else {
-                res.send(replace_mongoId_byPmid_inArray(allArticle));
+                res.send(allArticle);
                 console.log("number of articles in database: " + allArticle.length)
             }
             if (err)
@@ -73,8 +73,8 @@ apiRouter.route('/article-api/public/articles')
     });
 
 // Get article by _id
-//exemple URL: http://localhost:9999/article-api/public/article/_id/19909739
-apiRouter.route('/article-api/public/article/_id/:_id')
+//exemple URL: http://localhost:9999/article-api/public/article/pmid/19909739
+apiRouter.route('/article-api/public/article/pmid/:_id')
     .get(function (req, res, next) {
         var articlePmid = req.params._id;
         myGenericMongoClient.genericFindOne('articles',
@@ -83,8 +83,8 @@ apiRouter.route('/article-api/public/article/_id/:_id')
                 if (err)
                     res.send(err)
                 if (article) {
-                    res.send(replace_mongoId_byPmid(article));
-                    console.log("Article wit PMID: " + articlePmid + " is found")
+                    res.send(article);
+                    console.log("Article with PMID: " + articlePmid + " is found")
                 } else {
                     console.log("No article found with the PMID: " + articlePmid)
                 }
