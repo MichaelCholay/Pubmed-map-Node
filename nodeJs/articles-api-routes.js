@@ -1,12 +1,11 @@
 var express = require('express');
 const apiRouter = express.Router();
 const axios = require('axios').default;
-//const got = require('got');
-//fs = require('fs');
 var convert = require('xml-js');
-//var app = express();
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 require('dotenv').config()
+const cron = require("node-cron");
+let shell = require("shelljs");
 
 var myGenericMongoClient = require('./my_generic_mongo_client');
 const { response } = require('express');
@@ -214,8 +213,8 @@ apiRouter.route('/article-api/public/geoloc')
 
 
 // Get _id list for articles with search of pubmed-api each day
-function find_Pmid_bySearch_with_terms(/*term*/) {
-    var urlApiSearch = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&usehistory=y&reldate=20&term=Cell[ta]'/* + term*/
+function find_Pmid_bySearch_with_terms() {
+    var urlApiSearch = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&usehistory=y&reldate=20&term=' + journalsList
     let request = new XMLHttpRequest()
     request.open("GET", urlApiSearch)
     request.send()
@@ -304,9 +303,11 @@ function attributes_for_one_article(responseJs) {
 
 // prettier-ignore
 // list of top 20 of journals in  Biochemistry, Genetics and Molecular Biology (based on SCImago Journal Rank indicator )
-const journalsList = ['Nature Reviews Molecular Cell Biology',
-    'Nature Reviews Genetics',
-    'Cell',
+
+const journalsList = 'Cell[ta]+OR+Nature+Reviews+Genetics[ta]+OR+Nature+Reviews+Molecular+Cell+Biology[ta]'
+// 'Nature Reviews Molecular Cell Biology
+//     'Nature Reviews Genetics',
+//     'Cell',
     // 'Nature Reviews Cancer',
     // 'Nature Methods',
     // 'Nature Genetics',
@@ -324,9 +325,9 @@ const journalsList = ['Nature Reviews Molecular Cell Biology',
     // 'Journal of Clinical Oncology',
     // 'Nature Cell Biology',
     // 'Trends in Cell Biology'
-].map(function (v) {
-    return v.toLowerCase();
-});
+// ].map(function (v) {
+//     return v.toLowerCase();
+// });
 
 // ArticleData when request return a list of articles
 async function attributes_for_list_of_articles(publiListInput) {
@@ -339,7 +340,6 @@ async function attributes_for_list_of_articles(publiListInput) {
         var medlineCitationPropertyListArticles = publiListInput[i - 1].MedlineCitation
         var articlePropertyListArticles = publiListInput[i - 1].MedlineCitation.Article
         //console.log("journal top:" + articlePropertyListArticles.Journal.toLowerCase())
-        // if (journalsList.includes(articlePropertyListArticles.Journal.Title.toLowerCase())) {
         article._id = medlineCitationPropertyListArticles.PMID
         article.articleTitle = articlePropertyListArticles.ArticleTitle
         article.journal = articlePropertyListArticles.Journal.Title
@@ -408,8 +408,8 @@ async function attributes_for_list_of_articles(publiListInput) {
                     if (affPubmed != undefined) {
                         // console.log("affPubmed: " + affPubmed)
                         var affPubmedUTF8 = encodeURI(affPubmed)
-                        const mapsApiKey = process.env.KEYGOOGLE
-                        var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address= ${affPubmedUTF8} &key= ${mapsApiKey}`
+                        const mapsApiKey = process.env.KEY_GOOGLEMAPS
+                        var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address=${affPubmedUTF8}&key=${mapsApiKey}`
 
                         const geocod = await axios.get(urlGeoCodingAPI)
                             .then(resp => {
@@ -632,6 +632,14 @@ async function attributes_for_list_of_articles(publiListInput) {
     //     convert.xml2js(responseText, options);
     // }
 
+    //scheduler for pubmed api call (at 14:00 on every day-of-week)
+    cron.schedule("0 14 * * */1", async ()=>{
+        console.log("Scheduler running ...");
+        find_Pmid_bySearch_with_terms()
+        // if(shell.exec("dir").code !== 0){
+        //     console.log("Something went wrong");
+        // }
+    });
 
     exports.apiRouter = apiRouter;
 

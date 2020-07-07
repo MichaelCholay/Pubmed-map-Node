@@ -8,7 +8,6 @@ require('dotenv').config()
 const dbName = process.env.DB_NAME_MONGO
 const mongoDbUrl = process.env.URL_MONGO
 
-// var mongoDbUrl = `mongodb+srv://${userMongoDb}:${passwordMongoDb}@cluster0-buyal.mongodb.net/${dbName}?retryWrites=true&w=majority`
 var currentDb = null; //current MongoDB connection
 
 var setMongoDbUrl = function (dbUrl) {
