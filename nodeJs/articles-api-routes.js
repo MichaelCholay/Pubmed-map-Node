@@ -214,7 +214,7 @@ apiRouter.route('/article-api/public/geoloc')
 
 // Get _id list for articles with search of pubmed-api each day
 function find_Pmid_bySearch_with_terms() {
-    var urlApiSearch = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&usehistory=y&reldate=20&term=' + journalsList
+    var urlApiSearch = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&usehistory=y&reldate=1&term=' + journalsList
     let request = new XMLHttpRequest()
     request.open("GET", urlApiSearch)
     request.send()
