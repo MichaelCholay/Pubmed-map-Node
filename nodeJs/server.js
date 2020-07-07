@@ -5,6 +5,9 @@ var app = express();
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
 app.use(jsonParser);
+require('dotenv').config()
+
+const nodePort = process.env.PORT_NODE;
 
 
 //les routes en /html/... seront gérées par express
@@ -16,6 +19,6 @@ app.get('/', function (req, res) {
 });
 app.use(articleApiRoutes.apiRouter); //delegate REST API routes to apiRouter(s)
 
-app.listen(9999, function () {
-    console.log("http://localhost:9999");
+app.listen(nodePort, function () {
+    console.log("http://localhost:" + nodePort);
 });

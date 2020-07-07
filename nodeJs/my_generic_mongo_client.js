@@ -5,13 +5,12 @@ var assert = require('assert');
 require('dotenv').config()
 
 //environment variables for mongoDb Atlas
-const userMongoDb = process.env.USER;
-const passwordMongoDb = process.env.PASSWORD;
+const userMongoDb = process.env.USER_MONGO;
+const passwordMongoDb = process.env.PASSWORD_MONGO;
+const dbName = process.env.DB_NAME_MONGO
+const mongoDbUrl = process.env.URL_MONGO
 
-// var mongoDbUrl = 'mongodb://127.0.0.1:27017/pubmedMap'; //by default (local)
-// var mongoDbUrl = `mongodb+srv://drmcy:tekken00@cluster0-buyal.mongodb.net/${dbName}?retryWrites=true&w=majority`
-var mongoDbUrl = `mongodb+srv://${userMongoDb}:${passwordMongoDb}@cluster0-buyal.mongodb.net/${dbName}?retryWrites=true&w=majority`
-var dbName = "pubmed-map" //by default
+// var mongoDbUrl = `mongodb+srv://${userMongoDb}:${passwordMongoDb}@cluster0-buyal.mongodb.net/${dbName}?retryWrites=true&w=majority`
 var currentDb = null; //current MongoDB connection
 
 var setMongoDbUrl = function (dbUrl) {
