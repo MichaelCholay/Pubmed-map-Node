@@ -3,8 +3,9 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 var assert = require('assert');
 
-var mongoDbUrl = 'mongodb://127.0.0.1:27017/pubmedMap'; //by default
-var dbName = "pubmedMap" //by default
+// var mongoDbUrl = 'mongodb://127.0.0.1:27017/pubmedMap'; //by default (local)
+var mongoDbUrl = 'mongodb+srv://drmcy:tekken00@cluster0-buyal.mongodb.net/'+ dbName+ '?retryWrites=true&w=majority'
+var dbName = "pubmed-map" //by default
 var currentDb = null; //current MongoDB connection
 
 var setMongoDbUrl = function (dbUrl) {
