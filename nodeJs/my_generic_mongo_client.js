@@ -5,8 +5,6 @@ var assert = require('assert');
 require('dotenv').config()
 
 //environment variables for mongoDb Atlas
-const userMongoDb = process.env.USER_MONGO;
-const passwordMongoDb = process.env.PASSWORD_MONGO;
 const dbName = process.env.DB_NAME_MONGO
 const mongoDbUrl = process.env.URL_MONGO
 
