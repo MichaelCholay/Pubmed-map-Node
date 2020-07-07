@@ -6,6 +6,7 @@ const axios = require('axios').default;
 var convert = require('xml-js');
 //var app = express();
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+require('dotenv').config()
 
 var myGenericMongoClient = require('./my_generic_mongo_client');
 const { response } = require('express');
@@ -214,7 +215,7 @@ apiRouter.route('/article-api/public/geoloc')
 
 // Get _id list for articles with search of pubmed-api each day
 function find_Pmid_bySearch_with_terms(/*term*/) {
-    var urlApiSearch = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&usehistory=y&reldate=10&term=Cell[ta]'/* + term*/
+    var urlApiSearch = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&usehistory=y&reldate=20&term=Cell[ta]'/* + term*/
     let request = new XMLHttpRequest()
     request.open("GET", urlApiSearch)
     request.send()
@@ -407,7 +408,7 @@ async function attributes_for_list_of_articles(publiListInput) {
                     if (affPubmed != undefined) {
                         // console.log("affPubmed: " + affPubmed)
                         var affPubmedUTF8 = encodeURI(affPubmed)
-                        mapsApiKey = 'AIzaSyCmLt2lwBI0uLNbd8V7boG56frwEfS-QuU'
+                        const mapsApiKey = process.env.KEYGOOGLE
                         var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address= ${affPubmedUTF8} &key= ${mapsApiKey}`
 
                         const geocod = await axios.get(urlGeoCodingAPI)
