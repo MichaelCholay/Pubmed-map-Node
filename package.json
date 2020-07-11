@@ -2,9 +2,9 @@
   "name": "nodejs",
   "version": "1.0.0",
   "description": "pubmed-map project",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node nodejs.js",
+    "start": "node server.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "MCY",
