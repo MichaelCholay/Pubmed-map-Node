@@ -5,8 +5,8 @@ var assert = require('assert');
 require('dotenv').config()
 
 //environment variables for mongoDb Atlas
-const dbName = process.env.DB_NAME_MONGO
-const mongoDbUrl = process.env.URL_MONGO
+const dbName = process.env.DB_NAME_MONGO || DB_NAME_MONGO
+const mongoDbUrl = process.env.URL_MONGO || URL_MONGO
 
 var currentDb = null; //current MongoDB connection
 

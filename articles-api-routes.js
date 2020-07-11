@@ -408,7 +408,7 @@ async function attributes_for_list_of_articles(publiListInput) {
                     if (affPubmed != undefined) {
                         // console.log("affPubmed: " + affPubmed)
                         var affPubmedUTF8 = encodeURI(affPubmed)
-                        const mapsApiKey = process.env.KEY_GOOGLEMAPS
+                        const mapsApiKey = process.env.KEY_GOOGLEMAPS || KEY_GOOGLEMAPS
                         var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address=${affPubmedUTF8}&key=${mapsApiKey}`
 
                         const geocod = await axios.get(urlGeoCodingAPI)
