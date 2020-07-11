@@ -4,6 +4,7 @@
   "description": "pubmed-map project",
   "main": "index.js",
   "scripts": {
+    "start": "node nodejs.js",
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "MCY",
