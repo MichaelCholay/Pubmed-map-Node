@@ -7,7 +7,7 @@ var jsonParser = bodyParser.json()
 app.use(jsonParser);
 require('dotenv').config()
 
-const nodePort = process.env.PORT_NODE || PORT;
+const nodePort = process.env.PORT_NODE || 9999;
 
 
 //les routes en /html/... seront gérées par express
