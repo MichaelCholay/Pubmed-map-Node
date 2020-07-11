@@ -7,7 +7,7 @@ var jsonParser = bodyParser.json()
 app.use(jsonParser);
 require('dotenv').config()
 
-const nodePort = process.env.PORT_NODE || PORT_NODE;
+const nodePort = process.env.PORT_NODE || PORT;
 
 
 //les routes en /html/... seront gérées par express
@@ -20,5 +20,5 @@ app.get('/', function (req, res) {
 app.use(articleApiRoutes.apiRouter); //delegate REST API routes to apiRouter(s)
 
 app.listen(nodePort, function () {
-    console.log("http://localhost:" + nodePort);
+    console.log("Pubmed-map-node is running on port " + nodePort);
 });
