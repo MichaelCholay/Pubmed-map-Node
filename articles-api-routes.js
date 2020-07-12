@@ -420,8 +420,6 @@ async function attributes_for_list_of_articles(publiListInput) {
                                 // console.log("***lat: " + author.latitude)
                             })
                             .catch(err => console.log(err))
-                            
-
                     } else {
                         geoloc.latitude = "Not available"
                         geoloc.longitude = "Not available"
@@ -642,6 +640,6 @@ async function attributes_for_list_of_articles(publiListInput) {
     });
 
     exports.apiRouter = apiRouter;
-    module.exports = { find_Pmid_bySearch_with_terms }
+     exports.find_Pmid_bySearch_with_terms = find_Pmid_bySearch_with_terms;
     // exports.find_Pmid_bySearch_with_terms = getArticlesFromPubmed;
 
