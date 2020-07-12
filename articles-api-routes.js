@@ -632,7 +632,7 @@ async function attributes_for_list_of_articles(publiListInput) {
     //     convert.xml2js(responseText, options);
     // }
 
-    //scheduler for pubmed api call (at 14:00 on every day-of-week)
+    //local scheduler for pubmed api call (at 14:00 on every day-of-week)
     cron.schedule("0 14 * * */1", async ()=>{
         console.log("Scheduler running ...");
         find_Pmid_bySearch_with_terms()
@@ -642,6 +642,7 @@ async function attributes_for_list_of_articles(publiListInput) {
     });
 
     exports.apiRouter = apiRouter;
+    exports.find_Pmid_bySearch_with_terms = getArticlesFromPubmed;
 
 
 ///////////////////////////////////////////////////////////////////////////////////
