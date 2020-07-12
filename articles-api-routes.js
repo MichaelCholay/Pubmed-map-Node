@@ -642,8 +642,10 @@ async function attributes_for_list_of_articles(publiListInput) {
     });
 
     exports.apiRouter = apiRouter;
-    exports.find_Pmid_bySearch_with_terms = getArticlesFromPubmed;
-
+    // exports.find_Pmid_bySearch_with_terms = getArticlesFromPubmed;
+    module.exports = {
+        find_Pmid_bySearch_with_terms()
+    }
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*(async () => {

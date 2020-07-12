@@ -1,5 +1,7 @@
-var getArticlesFromPubmed = require('./articles-api-routes')
+const articlesApiRoutes = require('./articles-api-routes');
+
+var articlesApiRoutes = require('./articles-api-routes')
 
 console.log("Scheduler running ...");
-getArticlesFromPubmed.find_Pmid_bySearch_with_terms()
+articlesApiRoutes.find_Pmid_bySearch_with_terms()
 console.log("Scheduler end !!!");
