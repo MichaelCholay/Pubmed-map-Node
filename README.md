@@ -13,19 +13,15 @@ Pubmed-map is divided into 4 parts available in this Github account :
    - [Pubmed-map - Angular]([https://github.com/MichaelCholay/Pubmed-map-Front](https://github.com/MichaelCholay/Pubmed-map-Front)), the front part of this project based on open-source [Leaflet library]([http://www.leafletjs.com](http://www.leafletjs.com))
  
 
-## Technologies for development of Pubmed-map
+## Technologies for development of Pubmed-map - API REST
    
    - NodeJs v12 with several packages as express v4.17.1(network framework), axios v0.19.2 (HTTP client for API request), xml-js v1.6.11 (converter of XML text to Javascript object / JSON text), mongoDb v3.5.9 (official MongoDb driver) and XMLHttpRequest v1.8.0 (HTTP client for API request). Moreover, you need a project with a billing account and the Geolocation API  enabled in google maps to allow the geolocation of authors' address ⇒ creation of the API to question Pubmed
    - MongoDB v4.2, non-relationnal database ⇒ articles storage
-   - Spring boot v2.3.1 ⇒ java-based microservices
-   - MySQL v8, relational database ⇒ user and favorite articles storage
-   - Angular v9, TypeScript-based open-source web application framework
-
-## Technologies for CI/CD of Pubmed-map
+   
+## Technologies for CI/CD of Pubmed-map - API-REST
    
    - [Heroku](www.heroku.com), Cloud application platform
    - [MongoDB Atlas]([https://www.mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)), Cloud noSQL database
-   - [ClearDB](www.cleardb.com), Cloud MySQL database
    - [GitHub actions]([https://fr.github.com/features/actions](https://fr.github.com/features/actions)), CI/CD workflow
 
 ## How to use Pubmed-map - API REST
