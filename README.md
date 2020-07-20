@@ -1,5 +1,7 @@
-# Welcome to Pubmed-map ! (API - REST: part 1/4)
+# Welcome to Pubmed-map !
  ### Search - Localize - Cooperate
+ 
+ (API - REST: part 1/4)
 
 Pubmed-map allows localization and mapping of authors of biomedical literature from medline and life science journals of pubmed.gov library (NIH National Library of Medicine and NCBI National Center for Biotechnology Information) in the aim to develop cooperation between scientists. At this time, Pubmed-map API collect articles of the TOP3 of scientific journals (Cell, Nature Reviews Genetics and Nature Reviews Molecular Cell Biology) each day).
  
