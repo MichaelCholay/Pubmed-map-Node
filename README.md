@@ -44,6 +44,7 @@ Then, use the provided **.sample-env** file to set environment variables and sav
 
 ### Run
 `node server.js`
+At the first run, a document, named **articles** is create in your collection.
 
 ### API URL
 An API documentation (swagger-ui) is provided with the  [Pubmed-map - Spring Microservice article]([https://github.com/MichaelCholay/Pubmed-map-spring-articles](https://github.com/MichaelCholay/Pubmed-map-spring-articles)).
