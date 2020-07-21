@@ -64,21 +64,6 @@ var genericUpsertOne = function (collectionName, id, changes, callback_with_err_
 	});
 };
 
-// var genericInsertOne = function (collectionName, newOne, callback_with_err_and_newId) {
-// 	executeInMongoDbConnection(function (db) {
-// 		db.collection(collectionName).insertOne(newOne, function (err, result) {
-// 			if (err != null) {
-// 				console.log("genericInsertOne error = " + err);
-// 				newId = null;
-// 			}
-// 			else {
-// 				newId = newOne._id;
-// 			}
-// 			callback_with_err_and_newId(err, newId);
-// 		});
-// 	});
-// };
-
 var genericInsertOne = function (collectionName, newOne) {
 	executeInMongoDbConnection(function (db) {
 		db.collection(collectionName).insertOne(newOne, function (err, result) {
@@ -101,7 +86,6 @@ var genericRemove = function (collectionName, query, callback_with_err_and_resul
 			if (err != null) {
 				console.log("genericRemove error = " + err);
 			}
-			//if (err) throw err;
 			console.log(obj.result.n + " document(s) deleted");
 			callback_with_err_and_result(err, obj.result);
 		});
