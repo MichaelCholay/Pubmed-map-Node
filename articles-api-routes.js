@@ -448,32 +448,6 @@ async function attributes_for_list_of_articles(publiListInput) {
                         } else author.email = "Not available"
                     } else author.affiliationPubmed = affiliationInfoString
                 }
-                //////////// geocoding \\\\\\\\\\\\\\
-
-                var affPubmed = author.affiliationPubmed
-
-                if (affPubmed != undefined) {
-                    // console.log("affPubmed: " + affPubmed)
-                    var affPubmedUTF8 = encodeURI(affPubmed)
-                    mapsApiKey = 'AIzaSyCmLt2lwBI0uLNbd8V7boG56frwEfS-QuU'
-                    var urlGeoCodingAPI = `https://maps.googleapis.com/maps/api/geocode/json?address= ${affPubmedUTF8} &key= ${mapsApiKey}`
-
-                    const geocod = await axios.get(urlGeoCodingAPI)
-                        .then(resp => {
-                            //console.log("***resp.data: " + resp.data)
-                            author.googleFormatedAdress = resp.data.results[0].formatted_address
-                            author.latitude = resp.data.results[0].geometry.location.lat
-                            author.longitude = resp.data.results[0].geometry.location.lng
-                            // console.log("***lat: " + author.latitude)
-                        })
-                        .catch(err => console.log(err))
-                        
-
-                } else {
-                    geoloc.latitude = "Not available"
-                    geoloc.longitude = "Not available"
-                }
-                // console.log("ça c'est l'auteur:*****" + author.latitude + " " + author.lastName)
                 article.authorsList.push(author)
             }
         }
