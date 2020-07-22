@@ -15,7 +15,7 @@ Pubmed-map is divided into 4 parts available in this Github account :
 
 ## Technologies for development of Pubmed-map - API REST
    
-   - NodeJs v12 with several packages as express v4.17.1(network framework), axios v0.19.2 (HTTP client for API request), xml-js v1.6.11 (converter of XML text to Javascript object / JSON text), mongoDb v3.5.9 (official MongoDb driver) and XMLHttpRequest v1.8.0 (HTTP client for API request). Moreover, you need a project with a billing account and the Geolocation API  enabled in google maps to allow the geolocation of authors' address ⇒ creation of the API to question Pubmed
+   - NodeJs v12 with several packages as express v4.17.1(network framework), axios v0.19.2 (HTTP client for API request), xml-js v1.6.11 (converter of XML text to Javascript object / JSON text), mongoDb v3.5.9 (official MongoDb driver), XMLHttpRequest v1.8.0 (HTTP client for API request) and dotenv v8.2 (environment variables configuration). Moreover, you need a project with a billing account and the Geolocation API  enabled in google maps to allow the geolocation of authors' address ⇒ creation of the API to question Pubmed
    - MongoDB v4.2, non-relationnal database ⇒ articles storage
    
 ## Technologies for CI/CD of Pubmed-map - API-REST
