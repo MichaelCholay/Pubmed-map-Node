@@ -249,13 +249,13 @@ function attributes_for_one_article(responseJs) {
     article.journal = articlePropertyOneArticle.Journal.Title
 
 
-    if (medlineCitationPropertyOneArticle.hasOwnProperty("DateCompleted")) {
-        date = new Date(Date.UTC(medlineCitationPropertyOneArticle.DateCompleted.Year, medlineCitationPropertyOneArticle.DateCompleted.Month - 1, medlineCitationPropertyOneArticle.DateCompleted.Day))
-    } else date = new Date(Date.UTC(articlePropertyOneArticle.ArticleDate.Year, articlePropertyOneArticle.ArticleDate.Month - 1, articlePropertyOneArticle.ArticleDate.Day))
-    article.publicationDate = date.toLocaleDateString(undefined, optionDate)
+    // if (medlineCitationPropertyOneArticle.hasOwnProperty("DateCompleted")) {
+    //     date = new Date(Date.UTC(medlineCitationPropertyOneArticle.DateCompleted.Year, medlineCitationPropertyOneArticle.DateCompleted.Month - 1, medlineCitationPropertyOneArticle.DateCompleted.Day))
+    // } else date = new Date(Date.UTC(articlePropertyOneArticle.ArticleDate.Year, articlePropertyOneArticle.ArticleDate.Month - 1, articlePropertyOneArticle.ArticleDate.Day))
+    // article.publicationDate = date.toLocaleDateString(undefined, optionDate)
 
     dateOfRevision = new Date(Date.UTC(medlineCitationPropertyOneArticle.DateRevised.Year, medlineCitationPropertyOneArticle.DateRevised.Month - 1, medlineCitationPropertyOneArticle.DateRevised.Day))
-    article.revisionDate = dateOfRevision.toLocaleDateString(undefined, optionDate)
+    article.revisionDate = dateOfRevision.toLocaleDateString('fr-CA', optionDate)
 
     article.articleAbstract = articlePropertyOneArticle.Abstract.AbstractText
     article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article._id
