@@ -287,7 +287,7 @@ async function attributes_for_list_of_articles(publiListInput) {
             dateOfRevision = "No revision date"
             console.log("no DateRevised property for " + article._id)
         }
-        article.revisionDate = dateOfRevision.toLocaleDateString(undefined, optionDate)
+        article.revisionDate = dateOfRevision.toLocaleDateString('fr-CA', optionDate)
 
         if (articlePropertyListArticles.hasOwnProperty("Abstract")) {
             if (Array.isArray(articlePropertyListArticles.Abstract.AbstractText)) {
