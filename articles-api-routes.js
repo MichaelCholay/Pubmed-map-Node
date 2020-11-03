@@ -254,8 +254,8 @@ function attributes_for_one_article(responseJs) {
     // } else date = new Date(Date.UTC(articlePropertyOneArticle.ArticleDate.Year, articlePropertyOneArticle.ArticleDate.Month - 1, articlePropertyOneArticle.ArticleDate.Day))
     // article.publicationDate = date.toLocaleDateString(undefined, optionDate)
 
-    dateOfRevision = new Date(Date.UTC(medlineCitationPropertyOneArticle.DateRevised.Year, medlineCitationPropertyOneArticle.DateRevised.Month - 1, medlineCitationPropertyOneArticle.DateRevised.Day))
-    article.revisionDate = dateOfRevision.toLocaleDateString('fr-CA', optionDate)
+    // dateOfRevision = new Date(Date.UTC(medlineCitationPropertyOneArticle.DateRevised.Year, medlineCitationPropertyOneArticle.DateRevised.Month - 1, medlineCitationPropertyOneArticle.DateRevised.Day))
+    // article.revisionDate = dateOfRevision.toLocaleDateString('fr-CA', optionDate)
 
     article.articleAbstract = articlePropertyOneArticle.Abstract.AbstractText
     article.pubmedUrl = "https://pubmed.ncbi.nlm.nih.gov/" + article._id
@@ -282,12 +282,13 @@ async function attributes_for_list_of_articles(publiListInput) {
         article.journal = articlePropertyListArticles.Journal.Title
 
         if (medlineCitationPropertyListArticles.hasOwnProperty("DateRevised")) {
-            dateOfRevision = new Date(Date.UTC(medlineCitationPropertyListArticles.DateRevised.Year, medlineCitationPropertyListArticles.DateRevised.Month - 1, medlineCitationPropertyListArticles.DateRevised.Day))
+            // dateOfRevision = new Date(Date.UTC(medlineCitationPropertyListArticles.DateRevised.Year, medlineCitationPropertyListArticles.DateRevised.Month - 1, medlineCitationPropertyListArticles.DateRevised.Day))
+            article.revisionDate = `${medlineCitationPropertyListArticles.DateRevised.Year}-${medlineCitationPropertyListArticles.DateRevised.Month}-${medlineCitationPropertyListArticles.DateRevised.Day}`
         } else {
-            dateOfRevision = "No revision date"
+            article.revisionDate = "No revision date"
             console.log("no DateRevised property for " + article._id)
         }
-        article.revisionDate = dateOfRevision.toLocaleDateString('fr-CA', optionDate)
+        // article.revisionDate = dateOfRevision.toLocaleDateString('fr-CA', optionDate)
 
         if (articlePropertyListArticles.hasOwnProperty("Abstract")) {
             if (Array.isArray(articlePropertyListArticles.Abstract.AbstractText)) {
