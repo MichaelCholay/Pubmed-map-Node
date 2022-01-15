@@ -19,7 +19,7 @@
     "mongodb": "^3.5.8",
     "node-cron": "^2.0.3",
     "nodemon": "^2.0.4",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "xml-js": "^1.6.11",
     "xmlhttprequest": "^1.8.0"
   }
